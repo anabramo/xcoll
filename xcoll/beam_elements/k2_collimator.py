@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..scattering_routines.k2 import track, K2Engine, Material, CrystalMaterial
+from ..scattering_routines.k2 import track, Material, CrystalMaterial
 from .base_collimator import BaseCollimator
 
 import xobjects as xo
@@ -14,8 +14,7 @@ class K2Collimator(BaseCollimator):
         'offset':     xo.Float64,
         'onesided':   xo.Int8,
         'tilt':       xo.Float64[:],  # TODO: how to limit this to length 2
-        'material':   Material,
-        'k2engine':   K2Engine
+        'material':   Material
     }
 
     _skip_in_to_dict       = BaseCollimator._skip_in_to_dict
@@ -25,7 +24,6 @@ class K2Collimator(BaseCollimator):
     iscollective = True # TODO: will be set to False when fully in C
 
     def __init__(self, **kwargs):
-        kwargs.setdefault('k2engine', K2Engine())
         kwargs.setdefault('dpx', 0)
         kwargs.setdefault('dpx', 0)
         kwargs.setdefault('offset', 0)
@@ -43,6 +41,8 @@ class K2Collimator(BaseCollimator):
             tilt = [tilt, tilt]
         kwargs['tilt'] = tilt
         super().__init__(**kwargs)
+        from ..scattering_routines.k2.engine import K2Engine
+        K2Engine.add_collimator(self)
 
 
     def track(self, particles):  # TODO: write impacts
@@ -66,8 +66,7 @@ class K2Crystal(BaseCollimator):
         'offset':      xo.Float64,
         'onesided':    xo.Int8,
         'tilt':        xo.Float64[:],  # TODO: how to limit this to length 2
-        'material':    CrystalMaterial,
-        'k2engine':    K2Engine
+        'material':    CrystalMaterial
     }
 
     _skip_in_to_dict       = BaseCollimator._skip_in_to_dict
@@ -77,7 +76,6 @@ class K2Crystal(BaseCollimator):
     iscollective = True # TODO: will be set to False when fully in C
 
     def __init__(self, **kwargs):
-        kwargs.setdefault('k2engine', K2Engine())
         kwargs.setdefault('dpx', 0)
         kwargs.setdefault('dpx', 0)
         kwargs.setdefault('offset', 0)
@@ -102,6 +100,8 @@ class K2Crystal(BaseCollimator):
         kwargs.setdefault('miscut', 0)
         kwargs.setdefault('orient', 0)
         super().__init__(**kwargs)
+        from ..scattering_routines.k2.engine import K2Engine
+        K2Engine.add_collimator(self)
 
 
     def track(self, particles):  # TODO: write impacts
