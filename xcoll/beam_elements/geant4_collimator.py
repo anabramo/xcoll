@@ -12,8 +12,9 @@ class Geant4Collimator(BaseCollimator, BeamInteraction):
         BaseCollimator.__init__(self, **kwargs)
         # We skip the BeamInteraction initialisation (to avoid issues with setting the length)
         # and manually set the necessary flags
-        self.name = 'TEST'
-        self.interaction_process = None
+        if '_xobject' not in kwargs:
+            self.name = 'TEST'
+            self.interaction_process = None
 
 
     def track(self, part):
