@@ -24,7 +24,7 @@ class GeneralMaterial(xo.HybridClass):
         'name':                     xo.String
     }
 
-    _size = 200
+#     _size = 200
 
     def __init__(self, **kwargs):
         kwargs.setdefault('hcut', 0.02)
@@ -40,7 +40,7 @@ class Material(GeneralMaterial):
         'radiation_length':         xo.Float64      # radl
     }
 
-    _size = 208
+#     _size = 208
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -56,7 +56,7 @@ class CrystalMaterial(GeneralMaterial):
         'nuclear_collision_length': xo.Float64      # collnt [m]
     }
 
-    _size = 240
+#     _size = 240
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

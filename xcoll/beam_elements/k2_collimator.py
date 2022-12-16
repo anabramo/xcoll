@@ -47,7 +47,7 @@ class K2Collimator(BaseCollimator):
         super().__init__(**kwargs)
         if '_xobject' not in kwargs:
             from ..scattering_routines.k2.engine import K2Engine
-            K2Engine.add_collimator(self)
+            K2Engine()  # initialise the engine if it does not exist yet
 
 
     def track(self, particles):  # TODO: write impacts
@@ -108,7 +108,7 @@ class K2Crystal(BaseCollimator):
         super().__init__(**kwargs)
         if '_xobject' not in kwargs:
             from ..scattering_routines.k2.engine import K2Engine
-            K2Engine.add_collimator(self)
+            K2Engine()  # initialise the engine if it does not exist yet
 
 
     def track(self, particles):  # TODO: write impacts

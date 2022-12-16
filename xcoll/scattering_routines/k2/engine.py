@@ -8,12 +8,7 @@ class K2Engine(xo.HybridClass):
 
     _xofields = {
         '_capacity':              xo.Int64,
-        'random_generator_seed':  xo.Int64,
-        # TODO: MetaBeamElement is not subscriptable
-#         'collimators':            K2Collimator[:],    # TODO: make this one field for both collimators
-#         'crystals':               K2Crystal[:],       #       and crystals
-#         'random_state':           xo.Int64,           # TODO: to be implemented; number of randoms already sampled,
-#                                                       #       such that this can be taken up again later
+        'random_generator_seed':  xo.Int64
     }
 
     # The engine is a singleton
@@ -33,9 +28,6 @@ class K2Engine(xo.HybridClass):
         kwargs.setdefault('random_generator_seed', None)  # Allow seed to be set to None to get default:
         if kwargs['random_generator_seed'] is None:
             kwargs['random_generator_seed'] = np.random.randint(1, 10000000)
-#         kwargs.setdefault('collimators', [])
-#         kwargs.setdefault('crystals', [])
-#         kwargs.setdefault('random_freeze_state', -1)
         super().__init__(**kwargs)
         K2Engine.reset()
 
@@ -53,21 +45,4 @@ class K2Engine(xo.HybridClass):
                 cls.instance._warning_given = True
         else:
             pyk2_init(n_alloc=cls.instance._capacity, random_generator_seed=cls.instance.random_generator_seed)
-
-
-    @classmethod
-    def add_collimator(cls, collimator):
-        if not hasattr(cls, 'instance'):
-            cls()   # Instantiate the K2Engine if it doesn't exist yet
-        if isinstance(collimator, K2Collimator):
-#             if collimator not in self.collimators:
-#                 self.collimators += collimator
-            pass
-        elif isinstance(collimator, K2Crystal):
-#             if collimator not in self.crystals:
-#                 self.crystals += crystal
-            pass
-        else:
-            raise ValueError("The element to be added to the K2Engine is not a K2Collimator nor a K2Crystal!")
-
 

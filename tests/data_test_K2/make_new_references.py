@@ -31,7 +31,6 @@ def _reshuffle(part):
 def _make_collimator_ref(name):
     # Initialise engine
     xc.K2Engine(_capacity=50000, random_generator_seed=6574654)
-    xc.K2Engine.reset()
     # Load initial particles
     with open(Path(path, 'initial.json'), 'r') as fid:
         part = xp.Particles.from_dict(json.load(fid))
