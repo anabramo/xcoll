@@ -31,34 +31,29 @@ class BaseCollimator(xt.BeamElement):#, metaclass=MetaCollimator):
     _store_in_to_dict = ['is_active', 'angle']
     _internal_record_class = CollimatorImpacts
 
-    _size = 600 # BaseCollimator: 112, K2Collimator: 400, K2Crystal: 496
-
     def __init__(self, **kwargs):
         # TODO: quick hack to avoid instantiation; did not manage to get it to work correclty with ABC
-#         if self.__class__.__name__ == 'BaseCollimator':
-#             raise Exception("Abstract class 'BaseCollimator' cannot be instantiated!")
-        kwargs.setdefault('jaw_F_L', 1)
-        kwargs.setdefault('jaw_F_R', -1)
-        kwargs.setdefault('jaw_B_L', 1)
-        kwargs.setdefault('jaw_B_R', -1)
-        kwargs.setdefault('inactive_front', 0)
-        kwargs.setdefault('inactive_back', 0)
-        kwargs.setdefault('dx', 0)
-        kwargs.setdefault('dy', 0)
-        angle = kwargs.pop('angle', 0)
-        anglerad = angle / 180. * np.pi
-        kwargs['cos_z'] = np.cos(anglerad)
-        kwargs['sin_z'] = np.sin(anglerad)
-        is_active = kwargs.pop('is_active', True)
-        is_active = 1 if is_active == True else is_active
-        is_active = 0 if is_active == False else is_active
-        kwargs['_active'] = is_active
+        if self.__class__.__name__ == 'BaseCollimator':
+            raise Exception("Abstract class 'BaseCollimator' cannot be instantiated!")
+        if '_xobject' not in kwargs:
+            kwargs.setdefault('jaw_F_L', 1)
+            kwargs.setdefault('jaw_F_R', -1)
+            kwargs.setdefault('jaw_B_L', 1)
+            kwargs.setdefault('jaw_B_R', -1)
+            kwargs.setdefault('inactive_front', 0)
+            kwargs.setdefault('inactive_back', 0)
+            kwargs.setdefault('dx', 0)
+            kwargs.setdefault('dy', 0)
+            angle = kwargs.pop('angle', 0)
+            anglerad = angle / 180. * np.pi
+            kwargs['cos_z'] = np.cos(anglerad)
+            kwargs['sin_z'] = np.sin(anglerad)
+            is_active = kwargs.pop('is_active', True)
+            is_active = 1 if is_active == True else is_active
+            is_active = 0 if is_active == False else is_active
+            kwargs['_active'] = is_active
         super().__init__(**kwargs)
 
-    __name__ = 'BaseCollimator'
-
-    def __getitem__(self, shape):
-        return xo.Array.mk_arrayclass(self, shape)
 
     @property
     def angle(self):

@@ -2,7 +2,6 @@ import numpy as np
 import random
 import string
 
-import xobjects as xo
 from xtrack import BeamInteraction
 
 from ..scattering_routines.geant4 import Geant4Engine, Geant4Interaction
@@ -27,13 +26,15 @@ class Geant4Collimator(BaseCollimator, BeamInteraction):
         kwargs.setdefault('id', _new_id64())
         BaseCollimator.__init__(self, **kwargs)
         # We skip the BeamInteraction initialisation (to avoid issues with setting the length)
-        # and manually set the interaction process
+        # and manually set the necessary flags
+        if '_xobject' not in kwargs:
+            self.name = 'TEST'
         self.interaction_process = Geant4Interaction(element=self)
+
 
 
     def track(self, part):
         BeamInteraction.track(self, part)
-
-
+    
     # NEED TO HAVE UPDATE RULES!!! WHEN BeamElement.jaw_F_L etc are updated, this needs to be communicated to Geant4...
     # jaws are currently not set
