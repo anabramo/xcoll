@@ -36,15 +36,3 @@ class CollimatorImpacts(xo.HybridClass):
         'child_a':       xo.Int64[:],
         'child_pdgid':   xo.Int64[:],
     }
-
-    def __init__(self, _capacity, **kwargs):
-        _capacity = int(_capacity)
-        for val in 'id_parent', 'x_parent', 'px_parent', 'y_parent', 'py_parent', 'zeta_parent',\
-                'delta_parent', 'energy_parent',\
-                'id_child', 'x_child', 'px_child', 'y_child', 'py_child', 'zeta_child',\
-                'delta_child', 'energy_child',\
-                'at_element', 's', 'turn', 'interaction_type':
-            kwargs[val] = _capacity
-        self.xoinitialize(**kwargs)
-        self._capacity = _capacity
-        self._row_id = -1

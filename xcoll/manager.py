@@ -3,6 +3,7 @@ import pandas as pd
 
 from .beam_elements import BlackAbsorber, K2Collimator, K2Crystal, _all_collimator_types
 from .scattering_routines.k2.engine import K2Engine
+from .scattering_routines.geant4 import Geant4Engine
 from .colldb import CollDB
 from .tables import CollimatorImpacts
 
@@ -81,24 +82,27 @@ class CollimatorManager:
 
     @record_impacts.setter
     def record_impacts(self, record_impacts):
+        # record_impacts is True, False, or list with collimators for with to activate logging
         # TODO: how to get impacts if different collimator types in line?
         if record_impacts is True:
             record_impacts = self.collimator_names
         elif record_impacts is False or record_impacts is None:
             record_impacts = []
-        record_start = set(record_impacts) - set(self._record_impacts)
-        record_stop = set(self._record_impacts) - set(record_impacts)
-        if record_start:
+        # Define list of collimators to activate logging
+        record_activate = set(record_impacts) - set(self._record_impacts)
+        # Define list of collimators to deactivate logging
+        record_deactivate = set(self._record_impacts) - set(record_impacts)
+        if record_activate:
             if self._impacts is None:
                 self._impacts = xt.start_internal_logging(io_buffer=self._io_buffer, capacity=self.capacity, \
-                                                          elements=record_start)
+                                                          elements=record_activate)
             else:
                 xt.start_internal_logging(io_buffer=self._io_buffer, capacity=self.capacity, \
-                                          record=self._impacts, elements=record_start)
-        if record_stop:
+                                          record=self._impacts, elements=record_activate)
+        if record_deactivate:
             if self.tracker is not None:
                 self.tracker._check_invalidated()
-            xt.stop_internal_logging(elements=record_stop)
+            xt.stop_internal_logging(elements=record_deactivate)
         self._record_impacts = record_impacts
 
     @property
@@ -179,6 +183,30 @@ class CollimatorManager:
                     is_active=False
                    )
         self._install_collimators(names, collimator_class=K2Collimator, install_func=install_func, verbose=verbose)
+
+
+    def install_geant4_collimators(self, names=None, *, seed=None, verbose=False):
+        # Check for the existence of a Geant4Engine; warn if settings are different
+        # (only one instance of Geant4Engine should exist).
+        if self._g4engine is None:
+            self._g4engine = Geant4Engine(random_generator_seed=seed)
+        else:
+            if self._g4engine.random_generator_seed != seed:
+                print(f"Warning: Geant4 already initiated with seed {self._g4engine.random_generator_seed}.\n"
+                      + f"Ignoring the requested seed={seed}.")
+
+        # Do the installation
+        def install_func(thiscoll, name):
+            return Geant4Collimator(
+                    g4engine=self._g4engine,
+                    inactive_front=thiscoll['inactive_front'],
+                    inactive_back=thiscoll['inactive_back'],
+                    active_length=thiscoll['active_length'],
+                    angle=thiscoll['angle'],
+                    material=thiscoll['material'],
+                    is_active=False
+                   )
+        self._install_collimators(names, collimator_class=Geant4Collimator, install_func=install_func, verbose=verbose)
 
 
     def _install_collimators(self, names, *, collimator_class, install_func, verbose):

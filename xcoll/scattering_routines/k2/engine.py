@@ -2,6 +2,7 @@ import numpy as np
 
 import xobjects as xo
 
+from ...beam_elements.base_collimator import BaseCollimator
 from ...beam_elements import K2Collimator, K2Crystal
 
 class K2Engine(xo.HybridClass):
@@ -10,7 +11,7 @@ class K2Engine(xo.HybridClass):
         '_capacity':              xo.Int64,
         'random_generator_seed':  xo.Int64,
         # TODO: MetaBeamElement is not subscriptable
-#         'collimators':            K2Collimator[:],    # TODO: make this one field for both collimators
+#         'collimators':            BaseCollimator.__getitem__(BaseCollimator, 20),    # TODO: make this one field for both collimators
 #         'crystals':               K2Crystal[:],       #       and crystals
 #         'random_state':           xo.Int64,           # TODO: to be implemented; number of randoms already sampled,
 #                                                       #       such that this can be taken up again later
@@ -31,6 +32,7 @@ class K2Engine(xo.HybridClass):
         self._warning_given = False
         kwargs.setdefault('_capacity', 50000)
         kwargs.setdefault('random_generator_seed', None)  # Allow seed to be set to None to get default:
+#         kwargs.setdefault('collimators',[])
         if kwargs['random_generator_seed'] is None:
             kwargs['random_generator_seed'] = np.random.randint(1, 10000000)
 #         kwargs.setdefault('collimators', [])

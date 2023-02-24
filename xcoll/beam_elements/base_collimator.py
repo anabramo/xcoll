@@ -31,10 +31,12 @@ class BaseCollimator(xt.BeamElement):#, metaclass=MetaCollimator):
     _store_in_to_dict = ['is_active', 'angle']
     _internal_record_class = CollimatorImpacts
 
+    _size = 600 # BaseCollimator: 112, K2Collimator: 400, K2Crystal: 496
+
     def __init__(self, **kwargs):
         # TODO: quick hack to avoid instantiation; did not manage to get it to work correclty with ABC
-        if self.__class__.__name__ == 'BaseCollimator':
-            raise Exception("Abstract class 'BaseCollimator' cannot be instantiated!")
+#         if self.__class__.__name__ == 'BaseCollimator':
+#             raise Exception("Abstract class 'BaseCollimator' cannot be instantiated!")
         kwargs.setdefault('jaw_F_L', 1)
         kwargs.setdefault('jaw_F_R', -1)
         kwargs.setdefault('jaw_B_L', 1)
@@ -53,6 +55,10 @@ class BaseCollimator(xt.BeamElement):#, metaclass=MetaCollimator):
         kwargs['_active'] = is_active
         super().__init__(**kwargs)
 
+    __name__ = 'BaseCollimator'
+
+    def __getitem__(self, shape):
+        return xo.Array.mk_arrayclass(self, shape)
 
     @property
     def angle(self):

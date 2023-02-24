@@ -41,7 +41,7 @@ class K2Collimator(BaseCollimator):
             tilt = [tilt, tilt]
         kwargs['tilt'] = tilt
         super().__init__(**kwargs)
-        from ..scattering_routines.k2.engine import K2Engine
+        from ..scattering_routines.k2.engine import K2Engine   # avoid circular import
         K2Engine.add_collimator(self)
 
 
